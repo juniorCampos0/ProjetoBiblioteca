@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+  <testsuite errors="1" failures="0" hostname="MyComputer" id="0" name="BookControllerSpec" package="com.library" tests="1" time="2.629" timestamp="2020-01-17T18:23:45">
+      <properties />
+
+      <testcase classname="com.library.BookControllerSpec" name="func is funcional" time="2.562">
+          <error message="No signature of method: com.library.Book.func() is applicable for argument types: () values: []&#xa;Possible solutions: find(), find(java.lang.Object), find(com.library.Book), find(groovy.lang.Closure), find(java.lang.String), find(groovy.lang.Closure)" type="groovy.lang.MissingMethodException">groovy.lang.MissingMethodException: No signature of method: com.library.Book.func() is applicable for argument types: () values: []
+Possible solutions: find(), find(java.lang.Object), find(com.library.Book), find(groovy.lang.Closure), find(java.lang.String), find(groovy.lang.Closure)
+	at org.springsource.loaded.ri.ReflectiveInterceptor.jlrConstructorNewInstance(ReflectiveInterceptor.java:1002)
+	at org.grails.datastore.gorm.GormStaticApi.methodMissing(GormStaticApi.groovy:92)
+	at org.springsource.loaded.ri.ReflectiveInterceptor.jlrMethodInvoke(ReflectiveInterceptor.java:1270)
+	at org.grails.datastore.gorm.internal.StaticMethodInvokingClosure.call(StaticMethodInvokingClosure.groovy:32)
+	at com.library.BookControllerSpec.func is funcional(BookControllerSpec.groovy:22)
+</error>
+
+      </testcase>
+
+      <system-out><![CDATA[--Output from func is funcional--
+]]></system-out>
+
+      <system-err><![CDATA[--Output from func is funcional--
+]]></system-err>
+
+  </testsuite>
+</testsuites>
