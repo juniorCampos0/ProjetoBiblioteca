@@ -70,7 +70,7 @@
                             </li>
                         </g:each>
                     </ul>
-
+                    <a href="${g.createLink(controller: 'userLog', action: 'create')}">Mammia</a>
                 </li>
             </ul>
         </nav>

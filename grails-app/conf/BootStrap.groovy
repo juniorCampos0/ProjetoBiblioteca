@@ -1,9 +1,8 @@
 import com.library.Author
-import com.library.Book
-import com.library.Lending
 import com.library.UserLogRole
 import com.library.UserLog
 import com.library.Role
+import com.library.Book
 
 class BootStrap {
 

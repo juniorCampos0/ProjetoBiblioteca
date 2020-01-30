@@ -5,7 +5,7 @@
   Time: 6:35 PM
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.library.Book" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,6 +26,8 @@
 
 	<!-- Theme style -->
 	<g:external dir="css" file="adminlte.min.css"/>
+
+	<g:external dir="css" file="tabela.css"/>
 
 	<!-- Google Font: Source Sans Pro -->
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
@@ -68,7 +70,7 @@
 						<!-- small box -->
 						<div class="small-box bg-info">
 							<div class="inner">
-								<h3>${books.size()}</h3>
+								<h3>${ books.size()}</h3>
 								<p>Books</p>
 							</div>
 							<div class="icon">
@@ -106,11 +108,64 @@
 							<!-- /.card-header -->
 							<!-- card-body -->
 							<div class="card-body">
-								<g:render template="/dataTable"/>
+							<table id="example2" class="table table-bordered table-hover">
+								<thead>
+								<tr>
+									<th>Title</th>
+									<th>Subtitle</th>
+									<th>Labels</th>
+									<th>Authors</th>
+									<th>Avaliable</th>
+								</tr>
+								</thead>
+								<tbody>
+								<g:each in="${books}" var="book">
+									<tr>
+										<td><a href="${g.createLink(controller: 'book', action: 'bookView', params: [idBookSearched: book?.id])}">${book?.title}</a></td>
+										<td>${book?.subtitle}</td>
+										<td>
+											<g:each in="${book?.labels}" var="label">
+												${label?.tag}
+											</g:each>
+										</td>
+										<td>
+											<g:each in="${book?.authors}" var="author">
+												${author?.fullName}
+											</g:each>
+										</td>
+										<td>
+											<g:if test="${book?.available == null | book?.available}">Yes</g:if><g:else>No</g:else></li>
+										</td>
+									</tr>
+								</g:each>
+								</tbody>
+							</table>
+								<div class="card-footer">
+									<g:if test="${actionName == 'index'}">
+										<div class="my_pagination">
+											<g:paginate total="${bookCount ?: 0}" controller="book" action="index"/>
+										</div>
+									</g:if>
+									<g:else>
+										<div class="my_pagination">
+											<g:paginate total="${bookCount ?: 0}" controller="book" action="search" params="[expression: params.expression]"/>
+										</div>
+									</g:else>
+								</div>
 							</div>
 							<!-- /.card-body -->
 							</div>
 							<!-- /.card -->
+
+						<div class="card">
+							<div class="card-header" id="search">
+								<g:form action="search">
+                                    <g:field type="text" name="expression"/>
+                                    <g:submitButton name="search"/>
+                                </g:form>
+							</div>
+						</div>
+
 						</div>
 					</section>
 				<!-- /. col -->
@@ -119,6 +174,10 @@
 			</div><!-- /.container-fluid -->
 		</section>
 </div>
+
+
+
+
 
 <!-- ./wrapper -->
 <g:render template="/footer"/>
@@ -146,18 +205,18 @@
 
 <asset:javascript src="datatables-bs4/js/dataTables.bootstrap4.js"/>
 
-<script>
-	$(function () {
-		$('#example2').DataTable({
-			"paging": true,
-			"lengthChange": false,
-			"searching": false,
-			"ordering": true,
-			"info": true,
-			"autoWidth": false,
-		});
-	});
-</script>
+%{--<script>--}%
+%{--	$(function () {--}%
+%{--		$('#example2').DataTable({--}%
+%{--			"paging": true,--}%
+%{--			"lengthChange": false,--}%
+%{--			"searching": false,--}%
+%{--			"ordering": true,--}%
+%{--			"info": true,--}%
+%{--			"autoWidth": false,--}%
+%{--		});--}%
+%{--	});--}%
+%{--</script>--}%
 
 
 </body>

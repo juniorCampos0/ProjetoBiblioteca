@@ -2,12 +2,9 @@ package library
 
 import com.library.Book
 import com.library.Lending
-import com.library.Solicitation
 import com.library.UserLog
 import grails.plugin.springsecurity.annotation.Secured
 import grails.transaction.Transactional
-
-import java.time.LocalDate
 
 @Transactional
 class LendingsService {
@@ -69,22 +66,38 @@ class LendingsService {
     }
 
     static def getRecomendation(UserLog user) {
-        def authors = new ArrayList()
-        def lendings = user.lending
 
-        lendings.each {
-            it.book.authors.each{
-                authors.add(it)
-            }
+        def size = getHistory(user).size()
+
+        size = 10 < size ? 10 : size
+
+        def history = getHistory(user).sort {it.id}.subList(0,size)
+
+        def labels = new ArrayList()
+        def authors = new ArrayList()
+
+        for (lending in history){
+            labels.addAll(lending.book.labels)
+            authors.addAll(lending.book.authors)
         }
+        labels.unique()
 
         def books = new ArrayList()
 
-        for (it in authors){
-            it.books.each{
-                
+        for (book in Book.list()){
+            for (label in labels){
+                if(label in book.labels){
+                    books.add(book)
+                }
             }
         }
+
+        authors.each {
+            books.addAll(it.books)
+        }
+
+        books.unique()
+        return books
 
     }
 }

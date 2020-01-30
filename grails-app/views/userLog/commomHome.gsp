@@ -139,6 +139,18 @@
                         </div> <!-- /.card -->
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card"> <!-- card -->
+                            <div class="card-header"><!-- card-header -->
+                                <h3 class="card-title">Sugestions</h3><!-- card-title -->
+                            </div> <!-- /.card-header -->
+                            <div class="card-body"> <!-- card-body -->
+                                <g:render template="/dataTable" model="[books: recomendation]"/>
+                            </div> <!-- /.card-body -->
+                        </div> <!-- /.card -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -171,6 +183,7 @@
 <script>
     $(function () {
         $('#example3').DataTable();
+        $('#example4').DataTable();
         $('#example2').DataTable({
             "paging": true,
             "lengthChange": false,

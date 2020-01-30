@@ -26,6 +26,7 @@ environments {
             driverClassName = "com.mysql.cj.jdbc.Driver"
             username = "francisco"
             password = ""
+//            logSql = true
         }
     }
     test {

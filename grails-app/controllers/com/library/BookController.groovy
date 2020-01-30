@@ -3,25 +3,51 @@ package com.library
 
 import grails.plugin.springsecurity.annotation.Secured
 import grails.validation.ValidationException
-import groovyjarjarantlr.collections.List
 import library.RestFieldsService
 import library.UserLendingService
 import org.springframework.core.ConstantException
-
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 
 class BookController {
 
     def springSecurityService
+    def sessionFactory
 
     static defaultAction = "index"
 
     @Secured('permitAll')
     def index(){
+        def max
+        params.max = Math.min(max ?: 10, 100)
         def user = springSecurityService.currentUser
-        params.keySet().asList().each { if ('param1' != it) params.remove(it) }
-        [books: Book.list(), authors: Author.list(), user: springSecurityService.currentUser, lendings: UserLendingService.getBooksInLending(user)]
+        def books = Book.list(params)
+
+        println "\n\n\n"
+        for (param in params){
+            println param
+        }
+        println "bookCount: "+Book.count()
+        println "books: "+books.size()
+        println "\n\n\n"
+
+        [books: books, bookCount: Book.count(), authors: Author.list(), user: springSecurityService.currentUser, lendings: UserLendingService.getBooksInLending(user), page: 'index']
+    }
+
+    @Secured('permitAll')
+    def search(){
+        def max
+        def user = springSecurityService.currentUser
+        params.max = Math.min(max ?: 10, 100)
+
+        def queryMajor = Book.booksWithThisParameter(params.expression)
+
+        def result = getMactchedValue(params, params.expression)
+
+        println(result.result)
+
+        render view: 'index', model: [books: result.result, bookCount: result.count,
+                                      authors: Author.list(), user: user,
+                                      lendings: UserLendingService.getBooksInLending(user)]
     }
 
     @Secured('permitAll')
@@ -136,7 +162,14 @@ class BookController {
             book.edition = params.edition as int
             book.isbn = params.isbn
 //        book.publication = params.publication
-            book.labels.removeAll(true)
+
+            def labels = book.labels
+
+            labels.each {
+                book.removeFromLabels(it)
+            }
+
+
             for (def label in params.labels){
                 book.addToLabels(Label.get(label as int))
             }
@@ -184,5 +217,19 @@ class BookController {
         render view: '../userLog/admHome',  model: [authors: Author.list(), books: Book.list(), labels: Label.list(), message: message, user: user]
     }
 
-}
+    def getMactchedValue(def param, def expression){
+        def currentSession = sessionFactory.currentSession
+        def q = "select distinct b.id from book as b join book_authors on b.id = book_authors.book_id join author on book_authors.author_id = author.id join book_labels as ba on b.id = ba.book_id join label as l on label_id = l.id where title like('%${expression}%') or full_name like('%${expression}%') or tag like('%${expression}%') limit ${params.max} offset ${params.offset ?: 0};"
+        def data = currentSession.createSQLQuery(q)
+        def qc = "select distinct count(distinct b.id) from book as b join book_authors on b.id = book_authors.book_id join author on book_authors.author_id = author.id join book_labels as ba on b.id = ba.book_id join label as l on label_id = l.id where title like('%${expression}%') or full_name like('%${expression}%') or tag like('%${expression}%');"
+        def count = currentSession.createSQLQuery(qc)
 
+        def totalResults = new ArrayList()
+
+        data.list().each {
+            totalResults.add(Book.get(it))
+        }
+
+        return [result : totalResults, count : count.list()[0] as int]
+    }
+}
